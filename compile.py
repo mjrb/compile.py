@@ -1,23 +1,29 @@
-# 
+# copyright Michael J Winters 2017
+# liscensed under apache 2.0
+
 import pystache
 renderer=pystache.Renderer()
 
-def file2json(dirPath, fileName, data):
-    filePath=dirPath+'/'+fileName
-    title=fileName.replace('.mustache', '')
-    outputName=fileName.replace('.mustache', '.html')
-    fileContents=renderer.render_path(filePath, data)
-    return {'title':title, 'body':fileContents, 'outputName':outputName}
+def file2json(dirPath, data):
+    def curriedFunc(fileName):
+        filePath=dirPath+'/'+fileName
+        title=fileName.replace('.mustache', '')
+        outputName=fileName.replace('.mustache', '.html')
+        fileContents=renderer.render_path(filePath, data)
+        return {'title':title, 'body':fileContents, 'outputName':outputName}
+    return curriedFunc
 
-def render (dirPath, layoutPath, pageData):
-    layoutLocation=layoutPath
-    return renderer.render_path(layoutLocation, pageData)
+def render(dirPath, layoutPath, globalData):
+    def curriedFunc(pageData):
+        pageData.update(globalData)
+        return renderer.render_path(layoutPath, pageData)
+    return curriedFunc
 
 # builds json array from files to build
 def getFiles(dirPath, layoutPath, globalData):
     from os import listdir
     viewNames=listdir(dirPath)
-    files=list(map((lambda fileName:file2json(dirPath, fileName, globalData)),viewNames))
+    files=list(map(file2json(dirPath, globalData),viewNames))
     return files
 
 def compile(dirPath, layoutPath, outputDir='.', globalData={}):
@@ -27,7 +33,7 @@ def compile(dirPath, layoutPath, outputDir='.', globalData={}):
         pageData.update(globalData)
         return render(dirPath, layoutPath, pageData)
     
-    renderedFiles=list(map(renderFunc, files))
+    renderedFiles=list(map(render(dirPath, layoutPath, globalData), files))
 
     for i in range(0, len(files)):
         name=outputDir+'/'+files[i]['outputName']
