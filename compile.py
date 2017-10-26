@@ -29,10 +29,6 @@ def getFiles(dirPath, layoutPath, globalData):
 def compile(dirPath, layoutPath, outputDir='.', globalData={}):
     files=getFiles(dirPath, layoutPath, globalData)
     
-    def renderFunc(pageData):
-        pageData.update(globalData)
-        return render(dirPath, layoutPath, pageData)
-    
     renderedFiles=list(map(render(dirPath, layoutPath, globalData), files))
 
     for i in range(0, len(files)):
