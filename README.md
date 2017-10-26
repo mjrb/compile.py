@@ -1,4 +1,4 @@
-# mustache-AOT-compiler
+# compile.py
 compiles mustache documents AOT to static .html files  
 somewhat like jekyll, but decomplicated and stupidly easy to use.
 
