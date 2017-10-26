@@ -1,5 +1,5 @@
 # copyright Michael J Winters 2017
-# liscensed under apache 2.0
+# licensed under apache 2.0
 
 import pystache
 renderer=pystache.Renderer()
